@@ -10,7 +10,6 @@ function draw_aircraft(uu)
     viewSize = uu(8);
     viewAzimuth = uu(9);
     viewElevation = uu(10);
-    viewEnabled = uu(11);
 
     % define persistent variables 
     persistent aircraftHandle;
@@ -18,7 +17,6 @@ function draw_aircraft(uu)
     persistent faces
     persistent faceColors
 
-    % first time function is called, initialize plot and persistent vars
     if t==0
         figure(1);
         clf;
@@ -34,7 +32,7 @@ function draw_aircraft(uu)
         axis(calvViewLimits(p,viewSize));
         hold on
         grid on
-    else  % at every other time step, redraw
+    else
         figure(1);
         v = transformVertices(vertices,pn,pe,pd,phi,theta,psi);
         set(aircraftHandle,'Vertices',v,'Faces',faces);
@@ -45,33 +43,70 @@ function draw_aircraft(uu)
 end
 
 function [v,f,c] = defineAircraftBody
-    fuseL1 = TODO
-    fuseL2 = TODO
-    fuseL3 = TODO
-    fuseH = TODO
-    wingW = TODO
-    tailWingW = TODO
+    fuseL1 = 1;
+    fuseL2 = 
+    fuseH = 0.5;
+    wingW = 3;
+    wingL = 
+
     % define the location of vertices
-    v = TODO
+    v = ...
+        [
+                fuseL1              0           0;          % point 1
+                fuseL2              fuseW/2     -fuseH/2;   % point 2
+                % .
+                % .
+                % .
+                % TODO
+        ];
     % define the faces
-    f = TODO
+    f = ...
+        [
+                1   2   3   1;
+                1   3   4   1;
+                % .
+                % .
+                % .
+                %TODO
+        ];
     % define colors for each face    
     myred = [1, 0, 0];
     mygreen = [0, 1, 0];
-    myblue = TODO
-    c = TODO
+    myblue = [0, 0, 1];
+    myyellow = [1, 1, 0];
+    mycyan = [0, 1, 1];
+    c = ...
+        [
+            myred;
+            myred;
+            % .
+            % .
+            % .
+            %TODO
+        ];
 end
 
 function v = transformVertices(vertices,pn,pe,pd,phi,theta,psi)
-    v = angle2dcm(psi,theta,phi)'*vertices';  % rotate
+    R = rotation_matrix(phi,theta,psi);
+    v = R*vertices';  % rotate
     v = translate(v, pn, pe, pd)';  % translate
-    r = [...
+    R_to_ENU = [...
             0, 1, 0;...
             1, 0, 0;...
             0, 0, -1;...
-        ];  % transform vertices from NED to ENU 
-            % (for matlab rendering)
-    v=v*r;
+        ];  % transform vertices from NED to ENU (for matlab rendering)
+    v=v*R_to_ENU;
+end
+
+function R = rotation_matrix(phi,theta,psi)
+    % define rotation matrix
+    R_roll = [...
+        1, 0, 0;...
+        0, cos(phi), -sin(phi);...
+        0, sin(phi), cos(phi)];    
+    R_pitch = 
+    R_yaw = 
+    R = R_roll*R_pitch*R_yaw;
 end
 
 function v = translate(v,pn,pe,pd)
