@@ -44,19 +44,16 @@ end
 
 function [v,f,c] = defineAircraftBody
     fuseL1 = 1;
-    fuseL2 = 
-    fuseH = 0.5;
-    wingW = 3;
-    wingL = 
+    fuseL2 = 0.5;
+    wingL = 0.5;
+    tailWingW = 0.75;
+    % TODO
 
     % define the location of vertices
     v = ...
         [
                 fuseL1              0           0;          % point 1
                 fuseL2              fuseW/2     -fuseH/2;   % point 2
-                % .
-                % .
-                % .
                 % TODO
         ];
     % define the faces
@@ -64,10 +61,7 @@ function [v,f,c] = defineAircraftBody
         [
                 1   2   3   1;
                 1   3   4   1;
-                % .
-                % .
-                % .
-                %TODO
+                % TODO
         ];
     % define colors for each face    
     myred = [1, 0, 0];
@@ -78,35 +72,23 @@ function [v,f,c] = defineAircraftBody
     c = ...
         [
             myred;
-            myred;
-            % .
-            % .
-            % .
-            %TODO
+            myblue;
+            myyellow;
+            % TODO
         ];
 end
 
-function v = transformVertices(vertices,pn,pe,pd,phi,theta,psi)
+function vertices = transformVertices(vertices,pn,pe,pd,phi,theta,psi)
     R = rotation_matrix(phi,theta,psi);
-    v = R*vertices';  % rotate
-    v = translate(v, pn, pe, pd)';  % translate
+    vertices = R'*vertices';  % rotate
+    vertices = translate(vertices, pn, pe, pd);  % translate
     R_to_ENU = [...
             0, 1, 0;...
             1, 0, 0;...
             0, 0, -1;...
         ];  % transform vertices from NED to ENU (for matlab rendering)
-    v=v*R_to_ENU;
-end
-
-function R = rotation_matrix(phi,theta,psi)
-    % define rotation matrix
-    R_roll = [...
-        1, 0, 0;...
-        0, cos(phi), -sin(phi);...
-        0, sin(phi), cos(phi)];    
-    R_pitch = 
-    R_yaw = 
-    R = R_roll*R_pitch*R_yaw;
+    vertices = R_to_ENU * vertices;
+    vertices = vertices';
 end
 
 function v = translate(v,pn,pe,pd)
